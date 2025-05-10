@@ -41,16 +41,6 @@ def build_prompt_for_documentation(code_text):
         code:
         """
 
-def clean_q_output(output):
-    print("🔧 Cleaning up the Q CLI output...")
-    output = re.sub(r"^.*(code:|Documentation:)\n", "", output, flags=re.DOTALL)
-    output = re.sub(r'```.*?```', lambda m: f'{{{{CODE_BLOCK_{hash(m.group(0))}}}}}', output, flags=re.DOTALL)
-    output = re.sub(r'\x1b\[[0-9;]*m', '', output)
-    output = re.sub(r'(To learn more about MCP safety.*|/help.*|ctrl.*|━━━━━━━━━━━━━━━━.*)', '', output)
-    output = re.sub(r'\{\{CODE_BLOCK_(.*?)\}\}', lambda m: m.group(1), output)
-    
-    return output.strip()
-
 def call_q_cli(prompt):
     print("🚀 Quack is thinking... Calling the Q CLI to generate documentation...")
     try:
@@ -75,3 +65,23 @@ def call_q_cli(prompt):
     except Exception as e:
         print(f"❌ Exception: Something went wrong while calling Q CLI: {e}")
         return "Error generating documentation."
+
+def clean_q_output(output, inplace=False):
+    print("🔧 Cleaning up the Q CLI output...")
+    output = re.sub(r"^.*(code:|Documentation:)\n", "", output, flags=re.DOTALL)
+    output = re.sub(r'```.*?```', lambda m: f'{{{{CODE_BLOCK_{hash(m.group(0))}}}}}', output, flags=re.DOTALL)
+    output = re.sub(r'\x1b\[[0-9;]*m', '', output)
+    output = re.sub(r'(To learn more about MCP safety.*|/help.*|ctrl.*|━━━━━━━━━━━━━━━━.*)', '', output)
+    output = re.sub(r'\{\{CODE_BLOCK_(.*?)\}\}', lambda m: m.group(1), output)
+    
+    if inplace:
+        output = clean_language_output(output)
+    
+    return output.strip()
+
+def clean_language_output(output):
+    """Removes the language identifier line (e.g., python) from the generated documentation."""
+    output_lines = output.splitlines()
+    output_lines.pop(0)
+
+    return "\n".join(output_lines)

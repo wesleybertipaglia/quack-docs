@@ -5,7 +5,7 @@ from src.utils.file import save_file
 def build_documentation(code_text, call_q_cli, clean_q_output, build_prompt, inplace=False):
     prompt = build_prompt(code_text, inplace)
     doc = call_q_cli(prompt)
-    doc = clean_q_output(doc)
+    doc = clean_q_output(doc, inplace)
     
     return doc
 
