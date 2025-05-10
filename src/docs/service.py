@@ -1,5 +1,6 @@
-from datetime import datetime
 import os
+from datetime import datetime
+from src.utils.file import save_file
 
 def build_documentation(code_text, call_q_cli, build_prompt, clean_q_output):
     prompt = build_prompt(code_text)
@@ -13,7 +14,6 @@ def save_documentation(file_path, output, code_filename):
     header += f"file: {code_filename}\n"
     header += f"created at: {now}\n"
     header += "---\n\n"
-
+    
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(header + output)
+    save_file(file_path, header + output)
