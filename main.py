@@ -1,14 +1,9 @@
 import argparse
 import os
 from datetime import datetime
-from dotenv import load_dotenv
-
 from src.docs.service import build_documentation, save_documentation
 from src.q.service import build_prompt, call_q_cli, clean_q_output
 from src.utils.file import read_file
-
-load_dotenv()
-DEFAULT_CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 50))
 
 def main():
     print("🚀 Quack Docs — Automatic Documentation Generator started!")
