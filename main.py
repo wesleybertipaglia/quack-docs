@@ -1,5 +1,5 @@
-import argparse
 import os
+import argparse
 from datetime import datetime
 from pyfiglet import Figlet
 from rich.console import Console
@@ -64,10 +64,6 @@ def main():
         task = progress.add_task("🚀 Quack is thinking...", total=None)
         doc = build_documentation(code_text, inplace=args.inplace)
         progress.stop()
-
-    if "Error" in doc:
-        console.print("\n❌ [bold red]Documentation generation failed. Please check the messages above.[/bold red]")
-        return
 
     if args.inplace:
         save_doc_inplace(output_path, doc)
