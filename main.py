@@ -32,21 +32,21 @@ def main():
 
     if args.output is None:
         if args.inplace:
-            args.output = os.path.dirname(args.file)
+            args.output = os.path.dirname(args.file) or '.'
         else:
-            args.output = os.path.join('./docs')
+            args.output = './docs'
 
-    if not os.path.isdir(args.output):
-        if os.path.isfile(args.output):
-            console.print(f"❌ [bold red]Error:[/bold red] The output path {args.output} is a file, not a directory.")
-            return
-        else:
-            console.print(f"📂 [yellow]Creating output directory:[/yellow] {args.output}")
-            os.makedirs(args.output, exist_ok=True)
+    if os.path.isfile(args.output):
+        console.print(f"❌ [bold red]Error:[/bold red] The output path {args.output} is a file, not a directory.")
+        return
+
+    if not os.path.exists(args.output):
+        console.print(f"📂 [yellow]Creating output directory:[/yellow] {args.output}")
+        os.makedirs(args.output, exist_ok=True)
 
     filename = os.path.basename(args.file)
 
-    if not args.inplace:        
+    if not args.inplace:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = os.path.join(args.output, f"quack_{filename}_{timestamp}.md")
     else:
