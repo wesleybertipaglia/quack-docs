@@ -23,6 +23,9 @@ language_map = {
 }
 
 def detect_language(file_path):
-    """Detect the programming language based on file extension."""    
+    """Detect the programming language based on file extension."""
+    if not file_path or not isinstance(file_path, str):
+        raise ValueError("❌ Invalid file path provided for language detection.")
+
     ext = os.path.splitext(file_path)[1].lower()
     return language_map.get(ext, 'plaintext')

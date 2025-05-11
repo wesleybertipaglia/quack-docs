@@ -2,8 +2,6 @@ import subprocess
 import re
 
 def build_prompt(code_text, inplace=False):
-    print("📝 Building the prompt for documentation generation...")
-
     if inplace:
         prompt = build_prompt_for_docstring(code_text)
     else:
@@ -16,7 +14,7 @@ def build_prompt_for_docstring(code_text):
 
         Your task is to insert docstrings into the code below. For each function, method, or class, add an appropriate docstring.
         Do not change any other part of the code. Maintain indentation and original structure.
-        Do not write any comments, explanations, or any extra text outside of the docstrings.
+        Do not write any comments, explanations, or any extra text outside the docstrings.
 
         Code:
         {code_text}
@@ -42,7 +40,6 @@ def build_prompt_for_documentation(code_text):
         """
 
 def call_q_cli(prompt):
-    print("🚀 Quack is thinking... Calling the Q CLI to generate documentation...")
     try:
         result = subprocess.run(
             ["q"],
@@ -52,22 +49,17 @@ def call_q_cli(prompt):
         )
         
         if result.returncode != 0:
-            print("❌ Error: Q CLI returned an error.")
-            print(result.stderr)
-            return "Error generating documentation."
+            raise RuntimeError(f"Q CLI returned an error:\n{result.stderr}")
 
         return clean_q_output(result.stdout)
 
     except FileNotFoundError:
-        print("❌ Error: Q CLI is not installed. Please install Q CLI first.")
-        return "Error: Q CLI is not installed."
+        raise FileNotFoundError("Q CLI is not installed. Please install Q CLI first.")
 
     except Exception as e:
-        print(f"❌ Exception: Something went wrong while calling Q CLI: {e}")
-        return "Error generating documentation."
+        raise RuntimeError(f"Something went wrong while calling Q CLI: {e}")
 
 def clean_q_output(output, inplace=False):
-    print("🔧 Cleaning up the Q CLI output...")
     output = re.sub(r"^.*(code:|Documentation:)\n", "", output, flags=re.DOTALL)
     output = re.sub(r'```.*?```', lambda m: f'{{{{CODE_BLOCK_{hash(m.group(0))}}}}}', output, flags=re.DOTALL)
     output = re.sub(r'\x1b\[[0-9;]*m', '', output)
@@ -82,6 +74,6 @@ def clean_q_output(output, inplace=False):
 def clean_language_output(output):
     """Removes the language identifier line (e.g., python) from the generated documentation."""
     output_lines = output.splitlines()
-    output_lines.pop(0)
-
+    if output_lines:
+        output_lines.pop(0)
     return "\n".join(output_lines)
