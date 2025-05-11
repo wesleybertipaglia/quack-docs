@@ -40,6 +40,13 @@ Choose between two modes:
 
 ## 📦 Getting Started
 
+### Prerequisites
+
+* Python 3.8 or higher, you can download it from [python.org](https://www.python.org/downloads/).
+* [pipx](https://pypa.github.io/pipx/) for installing Python applications in isolated environments.
+* [Amazon Q CLI](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html) for code analysis and documentation generation.
+* An AWS account or a Builder ID to use the Amazon Q CLI (free plan), you can create one [here](https://docs.aws.amazon.com/signin/latest/userguide/create-aws_builder_id.html).
+
 ### 1. Clone the Repo
 
 ```bash
@@ -47,13 +54,14 @@ git clone https://github.com/wesleybertipaglia/quack-docs.git
 cd quack-docs
 ```
 
-### 2. Install Dependencies
+### 2. Install `pipx` (if you don't have it)
 
 ```bash
-make install
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
 ```
 
-### 3. Set up Amazon Q CLI
+### 3. Set up Amazon Q CLI (if you don't have it)
 
 Follow [these steps](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html) to install and authenticate:
 
@@ -61,12 +69,24 @@ Follow [these steps](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/co
 q login
 ```
 
+### 4. Install Quack Docs
+
+```bash
+# using make
+make install
+
+# or using pipx
+pipx install .
+```
+
+> That's it, now `quack-docs` is ready to use! 🎉
+
 ## 🧪 Usage
 
 ### Generate Markdown Documentation
 
 ```bash
-python main.py --file path/to/your_file.py
+quack-docs --file path/to/your_file.py
 ```
 
 ➡️ Creates a Markdown file like:
@@ -75,7 +95,7 @@ python main.py --file path/to/your_file.py
 You can also choose a custom output directory:
 
 ```bash
-python main.py --file path/to/your_file.py --output ./my_docs/
+quack-docs --file path/to/your_file.py --output ./my_docs/
 ```
 
 ➡️ Creates:
@@ -84,7 +104,7 @@ python main.py --file path/to/your_file.py --output ./my_docs/
 ### Insert Docstrings into Your Code
 
 ```bash
-python main.py --file path/to/your_file.py --inplace
+quack-docs --file path/to/your_file.py --inplace
 ```
 
 ➡️ Overwrites your file with inline docstrings.
@@ -92,7 +112,7 @@ python main.py --file path/to/your_file.py --inplace
 You can optionally save the modified file into a different directory while preserving its filename:
 
 ```bash
-python main.py --file path/to/your_file.py --inplace --output ./src/
+quack-docs --file path/to/your_file.py --inplace --output ./src/
 ```
 
 ➡️ Saves:
