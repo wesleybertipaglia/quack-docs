@@ -3,9 +3,7 @@ import os
 from datetime import datetime
 from pyfiglet import Figlet
 from rich.console import Console
-from rich import print
 from rich.progress import Progress, SpinnerColumn, TextColumn
-
 from src.docs.service import build_documentation, save_doc_markdown, save_doc_inplace
 from src.utils.file import read_file
 
@@ -21,11 +19,38 @@ def main():
 
     parser = argparse.ArgumentParser(
         description="📄 Quack Docs — Automatically generate clean documentation using Amazon Q CLI.",
-        usage="python main.py --file <path> [--inplace]"
+        usage="python main.py --file <path> [--output <dir>] [--inplace]"
     )
     parser.add_argument('--file', required=True, help='Path to the code file to be documented')
+    parser.add_argument('--output', help='Directory to save the generated documentation or modified code')
     parser.add_argument('--inplace', action='store_true', help='If set, injects docstrings directly into the code')
     args = parser.parse_args()
+
+    if not os.path.isfile(args.file):
+        console.print(f"❌ [bold red]Error:[/bold red] The file {args.file} does not exist.")
+        return
+
+    if args.output is None:
+        if args.inplace:
+            args.output = os.path.dirname(args.file)
+        else:
+            args.output = os.path.join('./docs')
+
+    if not os.path.isdir(args.output):
+        if os.path.isfile(args.output):
+            console.print(f"❌ [bold red]Error:[/bold red] The output path {args.output} is a file, not a directory.")
+            return
+        else:
+            console.print(f"📂 [yellow]Creating output directory:[/yellow] {args.output}")
+            os.makedirs(args.output, exist_ok=True)
+
+    filename = os.path.basename(args.file)
+
+    if not args.inplace:        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = os.path.join(args.output, f"quack_{filename}_{timestamp}.md")
+    else:
+        output_path = os.path.join(args.output, filename)
 
     console.print(f"📄 [cyan]Reading file:[/cyan] {args.file}\n")
     code_text = read_file(args.file)
@@ -44,14 +69,10 @@ def main():
         console.print("\n❌ [bold red]Documentation generation failed. Please check the messages above.[/bold red]")
         return
 
-    filename = os.path.basename(args.file)
-
     if args.inplace:
-        save_doc_inplace(args.file, doc)
-        console.print(f"\n✅ [bold green]Docstrings successfully added to:[/bold green] {args.file}")
+        save_doc_inplace(output_path, doc)
+        console.print(f"\n✅ [bold green]Docstrings successfully added to:[/bold green] {output_path}")
     else:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_path = f"docs/quack_{filename}_{timestamp}.md"
         save_doc_markdown(output_path, doc, filename)
         console.print(f"\n📄 [bold green]Documentation successfully generated at:[/bold green] {output_path}")
 
