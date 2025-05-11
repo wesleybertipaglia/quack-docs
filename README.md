@@ -69,7 +69,17 @@ q login
 python main.py --file path/to/your_file.py
 ```
 
-> ➡️ Creates something like: `docs/quack_your_file_20250510_103000.md`
+➡️ Creates a Markdown file like:
+`./docs/quack_your_file_20250510_103000.md`
+
+You can also choose a custom output directory:
+
+```bash
+python main.py --file path/to/your_file.py --output ./my_docs/
+```
+
+➡️ Creates:
+`./my_docs/quack_your_file_20250510_103000.md`
 
 ### Insert Docstrings into Your Code
 
@@ -77,7 +87,26 @@ python main.py --file path/to/your_file.py
 python main.py --file path/to/your_file.py --inplace
 ```
 
-> ➡️ Modifies your file with inline docstrings.
+➡️ Overwrites your file with inline docstrings.
+
+You can optionally save the modified file into a different directory while preserving its filename:
+
+```bash
+python main.py --file path/to/your_file.py --inplace --output ./src/
+```
+
+➡️ Saves:
+`./src/your_file.py`
+
+⚠️ **Important:** The `--output` parameter must always be a **directory path**, not a full file path.
+
+### 📌 Quick Reference
+
+| Mode     | Description                            | Default Output         | Customizable     |
+| :------- | :------------------------------------- | :--------------------- | :--------------- |
+| Markdown | Generates external `.md` documentation | `./docs/`              | ✅ via `--output` |
+| In-place | Inserts docstrings into your code file | Overwrites source file | ✅ via `--output` |
+
 
 ## 🤝 Contribute
 
